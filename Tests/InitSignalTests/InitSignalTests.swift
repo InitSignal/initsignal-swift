@@ -11,7 +11,7 @@ final class InitSignalTests: XCTestCase {
         let transport = MockTransport(results: [.success(202)])
         let runtime = InitSignalRuntime()
         let options = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
@@ -36,7 +36,7 @@ final class InitSignalTests: XCTestCase {
         let failingTransport = MockTransport(results: [.failure(MockError.offline)])
         let firstRuntime = InitSignalRuntime()
         let firstOptions = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
@@ -54,7 +54,7 @@ final class InitSignalTests: XCTestCase {
         let retryTransport = MockTransport(results: [.success(202)])
         let retryRuntime = InitSignalRuntime()
         let retryOptions = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
@@ -79,7 +79,7 @@ final class InitSignalTests: XCTestCase {
         let transport = MockTransport(results: [.success(202)])
         let runtime = InitSignalRuntime()
         let options = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
@@ -101,7 +101,7 @@ final class InitSignalTests: XCTestCase {
         let transport = MockTransport(results: [.success(202)])
         let runtime = InitSignalRuntime()
         let options = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
@@ -125,7 +125,7 @@ final class InitSignalTests: XCTestCase {
         let transport = MockTransport(results: [.success(202)])
         let runtime = InitSignalRuntime()
         let options = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
@@ -149,7 +149,7 @@ final class InitSignalTests: XCTestCase {
         let transport = MockTransport(results: [.success(202)])
         let runtime = InitSignalRuntime()
         let options = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
@@ -173,7 +173,7 @@ final class InitSignalTests: XCTestCase {
 
         let transport = MockTransport(results: [.success(202), .success(202)])
         let options = InitSignal.Configuration(
-            apiKey: "is_live_test",
+            appKey: "is_live_test",
             endpoint: URL(string: "https://example.com/first-launch")!,
             debug: true,
             userDefaultsSuiteName: suiteName,
@@ -208,7 +208,7 @@ private actor MockTransport: FirstLaunchTransport {
         self.results = results
     }
 
-    func send(payload: FirstLaunchPayload, apiKey: String, endpoint: URL, timeout: TimeInterval) async throws -> Int {
+    func send(payload: FirstLaunchPayload, appKey: String, endpoint: URL, timeout: TimeInterval) async throws -> Int {
         payloads.append(payload)
 
         let result = results.isEmpty ? .success(202) : results.removeFirst()

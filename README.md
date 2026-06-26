@@ -62,7 +62,7 @@ Use debug mode while verifying the integration from Xcode:
 
 ```swift
 InitSignal.start { options in
-    options.apiKey = "is_live_..."
+    options.appKey = "is_live_..."
     options.debug = true
 }
 ```

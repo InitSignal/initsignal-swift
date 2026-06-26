@@ -3,8 +3,8 @@ import Foundation
 public enum InitSignal {
     public static let sdkVersion = "internal"
 
-    public static func start(_ apiKey: String, configure: (inout Options) -> Void = { _ in }) {
-        var options = Options(apiKey: apiKey)
+    public static func start(_ appKey: String, configure: (inout Options) -> Void = { _ in }) {
+        var options = Options(appKey: appKey)
         configure(&options)
         start(options)
     }
@@ -24,7 +24,7 @@ public enum InitSignal {
 
 public extension InitSignal {
     struct Options: Sendable {
-        public var apiKey: String
+        public var appKey: String
         public var endpoint: URL
         public var requestTimeout: TimeInterval
         public var debug: Bool
@@ -36,12 +36,12 @@ public extension InitSignal {
         let isDevelopmentBuild: Bool
 
         public init(
-            apiKey: String = "",
+            appKey: String = "",
             endpoint: URL = URL(string: "https://initsignal.com/api/v1/first-launch")!,
             requestTimeout: TimeInterval = 4,
             debug: Bool = false
         ) {
-            self.apiKey = apiKey
+            self.appKey = appKey
             self.endpoint = endpoint
             self.requestTimeout = requestTimeout
             self.debug = debug
@@ -53,7 +53,7 @@ public extension InitSignal {
         }
 
         init(
-            apiKey: String = "",
+            appKey: String = "",
             endpoint: URL,
             requestTimeout: TimeInterval = 4,
             debug: Bool = false,
@@ -63,7 +63,7 @@ public extension InitSignal {
             eligibilityChecker: (any AppStoreInstallEligibilityChecking)? = nil,
             isDevelopmentBuild: Bool = false
         ) {
-            self.apiKey = apiKey
+            self.appKey = appKey
             self.endpoint = endpoint
             self.requestTimeout = requestTimeout
             self.debug = debug
@@ -87,12 +87,12 @@ actor InitSignalRuntime {
         guard didStart == false else { return }
         didStart = true
 
-        let trimmedApiKey = options.apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmedApiKey.isEmpty == false else { return }
+        let trimmedAppKey = options.appKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedAppKey.isEmpty == false else { return }
 
         if options.isDevelopmentBuild {
             guard options.debug else { return }
-            await sendDebugLaunch(apiKey: trimmedApiKey, options: options)
+            await sendDebugLaunch(appKey: trimmedAppKey, options: options)
             return
         }
 
@@ -118,7 +118,7 @@ actor InitSignalRuntime {
         guard let payload = FirstLaunchPayload.current(eventUUID: eventUUID) else { return }
 
         do {
-            let statusCode = try await send(payload: payload, apiKey: trimmedApiKey, options: options)
+            let statusCode = try await send(payload: payload, appKey: trimmedAppKey, options: options)
 
             if (200..<300).contains(statusCode) {
                 storage.markSent()
@@ -133,12 +133,12 @@ actor InitSignalRuntime {
         }
     }
 
-    private func sendDebugLaunch(apiKey: String, options: InitSignal.Options) async {
+    private func sendDebugLaunch(appKey: String, options: InitSignal.Options) async {
         guard let payload = FirstLaunchPayload.current(eventUUID: UUID(), installSource: "development") else { return }
         log("Sending InitSignal debug launch", options: options)
 
         do {
-            let statusCode = try await send(payload: payload, apiKey: apiKey, options: options)
+            let statusCode = try await send(payload: payload, appKey: appKey, options: options)
 
             if (200..<300).contains(statusCode) {
                 log("InitSignal debug launch accepted", options: options)
@@ -155,12 +155,12 @@ actor InitSignalRuntime {
         return await checker.eligibility()
     }
 
-    private func send(payload: FirstLaunchPayload, apiKey: String, options: InitSignal.Options) async throws -> Int {
+    private func send(payload: FirstLaunchPayload, appKey: String, options: InitSignal.Options) async throws -> Int {
         let transport = options.transport ?? URLSessionFirstLaunchTransport()
 
         return try await transport.send(
             payload: payload,
-            apiKey: apiKey,
+            appKey: appKey,
             endpoint: options.endpoint,
             timeout: options.requestTimeout
         )
