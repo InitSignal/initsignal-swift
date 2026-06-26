@@ -1,7 +1,7 @@
 import Foundation
 
 public enum InitSignal {
-    public static let sdkVersion = "0.2.0"
+    public static let sdkVersion = "internal"
 
     public static func start(_ apiKey: String, configure: (inout Options) -> Void = { _ in }) {
         var options = Options(apiKey: apiKey)
@@ -32,6 +32,7 @@ public extension InitSignal {
         let userDefaultsSuiteName: String?
         let retryPolicy: RetryPolicy
         let transport: (any FirstLaunchTransport)?
+        let eligibilityChecker: (any AppStoreInstallEligibilityChecking)?
         let isDevelopmentBuild: Bool
 
         public init(
@@ -47,6 +48,7 @@ public extension InitSignal {
             self.userDefaultsSuiteName = nil
             self.retryPolicy = .default
             self.transport = nil
+            self.eligibilityChecker = nil
             self.isDevelopmentBuild = BuildEnvironment.isDevelopmentBuild
         }
 
@@ -58,6 +60,7 @@ public extension InitSignal {
             userDefaultsSuiteName: String?,
             retryPolicy: RetryPolicy = .default,
             transport: (any FirstLaunchTransport)? = nil,
+            eligibilityChecker: (any AppStoreInstallEligibilityChecking)? = nil,
             isDevelopmentBuild: Bool = false
         ) {
             self.apiKey = apiKey
@@ -67,6 +70,7 @@ public extension InitSignal {
             self.userDefaultsSuiteName = userDefaultsSuiteName
             self.retryPolicy = retryPolicy
             self.transport = transport
+            self.eligibilityChecker = eligibilityChecker
             self.isDevelopmentBuild = isDevelopmentBuild
         }
     }
@@ -95,6 +99,18 @@ actor InitSignalRuntime {
         let storage = FirstLaunchStorage(suiteName: options.userDefaultsSuiteName)
         guard storage.hasSent == false else { return }
         guard storage.canRetry(now: Date()) else { return }
+
+        switch await appStoreInstallEligibility(options: options) {
+        case .eligible:
+            break
+        case let .ineligible(reason):
+            log("InitSignal skipped: \(reason)", options: options)
+            return
+        case let .unknown(reason):
+            storage.recordFailure(now: Date(), retryPolicy: options.retryPolicy)
+            log("InitSignal deferred: \(reason)", options: options)
+            return
+        }
 
         let eventUUID = storage.pendingEventUUID ?? UUID()
         storage.pendingEventUUID = eventUUID
@@ -132,6 +148,11 @@ actor InitSignalRuntime {
         } catch {
             log("InitSignal debug launch failed: \(error)", options: options)
         }
+    }
+
+    private func appStoreInstallEligibility(options: InitSignal.Options) async -> AppStoreInstallEligibility {
+        let checker = options.eligibilityChecker ?? StoreKitAppStoreInstallEligibilityChecker()
+        return await checker.eligibility()
     }
 
     private func send(payload: FirstLaunchPayload, apiKey: String, options: InitSignal.Options) async throws -> Int {

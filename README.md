@@ -2,6 +2,14 @@
 
 Tiny Swift SDK for sending exactly one first-launch signal to InitSignal.
 
+## Requirements
+
+- iOS/iPadOS 16+
+- macOS 13+
+- Mac Catalyst 16+
+
+InitSignal uses StoreKit 2 app transaction metadata to send only for customers whose original app download/purchase version matches the current app version. Existing customers who installed an older version are skipped.
+
 ## Install
 
 Add this package in Xcode:
@@ -64,6 +72,9 @@ In local debug builds, `debug = true` sends a fresh `development` signal on each
 ## Behavior
 
 - Sends one accepted first-launch event per app install/app lifetime outside debug mode.
+- Sends only when StoreKit confirms the app's original download/purchase version matches the current app version.
+- Skips existing customers whose original app version is older than the current version.
+- If StoreKit cannot verify the app transaction, skips quietly and tries again on a later launch.
 - Local debug builds do not send unless `options.debug = true`.
 - If the first attempt fails, retries quietly on later launches using the same event UUID.
 - Marks the launch as sent only after InitSignal accepts the event.

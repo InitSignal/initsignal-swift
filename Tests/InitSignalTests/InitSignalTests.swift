@@ -15,7 +15,8 @@ final class InitSignalTests: XCTestCase {
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
-            transport: transport
+            transport: transport,
+            eligibilityChecker: MockEligibilityChecker(.eligible)
         )
 
         await runtime.start(options: options)
@@ -39,7 +40,8 @@ final class InitSignalTests: XCTestCase {
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
-            transport: failingTransport
+            transport: failingTransport,
+            eligibilityChecker: MockEligibilityChecker(.eligible)
         )
 
         await firstRuntime.start(options: firstOptions)
@@ -56,7 +58,8 @@ final class InitSignalTests: XCTestCase {
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
-            transport: retryTransport
+            transport: retryTransport,
+            eligibilityChecker: MockEligibilityChecker(.eligible)
         )
 
         await retryRuntime.start(options: retryOptions)
@@ -80,13 +83,62 @@ final class InitSignalTests: XCTestCase {
             endpoint: URL(string: "https://example.com/first-launch")!,
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
-            transport: transport
+            transport: transport,
+            eligibilityChecker: MockEligibilityChecker(.eligible)
         )
 
         await runtime.start(options: options)
 
         let payloads = await transport.payloads
         XCTAssertEqual(payloads.count, 0)
+    }
+
+    func testIneligibleOriginalAppVersionSkipsNetworkRequest() async {
+        let suiteName = "InitSignalTests.\(UUID().uuidString)"
+        let storage = FirstLaunchStorage(suiteName: suiteName)
+        storage.resetForTests()
+
+        let transport = MockTransport(results: [.success(202)])
+        let runtime = InitSignalRuntime()
+        let options = InitSignal.Configuration(
+            apiKey: "is_live_test",
+            endpoint: URL(string: "https://example.com/first-launch")!,
+            userDefaultsSuiteName: suiteName,
+            retryPolicy: .immediate,
+            transport: transport,
+            eligibilityChecker: MockEligibilityChecker(.ineligible("existing install"))
+        )
+
+        await runtime.start(options: options)
+
+        let payloads = await transport.payloads
+        XCTAssertEqual(payloads.count, 0)
+        XCTAssertFalse(storage.hasSent)
+        XCTAssertNil(storage.pendingEventUUID)
+    }
+
+    func testUnknownOriginalAppVersionDefersWithoutPayload() async {
+        let suiteName = "InitSignalTests.\(UUID().uuidString)"
+        let storage = FirstLaunchStorage(suiteName: suiteName)
+        storage.resetForTests()
+
+        let transport = MockTransport(results: [.success(202)])
+        let runtime = InitSignalRuntime()
+        let options = InitSignal.Configuration(
+            apiKey: "is_live_test",
+            endpoint: URL(string: "https://example.com/first-launch")!,
+            userDefaultsSuiteName: suiteName,
+            retryPolicy: .immediate,
+            transport: transport,
+            eligibilityChecker: MockEligibilityChecker(.unknown("transaction unavailable"))
+        )
+
+        await runtime.start(options: options)
+
+        let payloads = await transport.payloads
+        XCTAssertEqual(payloads.count, 0)
+        XCTAssertFalse(storage.hasSent)
+        XCTAssertNil(storage.pendingEventUUID)
     }
 
     func testDevelopmentBuildWithoutDebugDoesNotSend() async {
@@ -102,6 +154,7 @@ final class InitSignalTests: XCTestCase {
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
             transport: transport,
+            eligibilityChecker: MockEligibilityChecker(.eligible),
             isDevelopmentBuild: true
         )
 
@@ -126,6 +179,7 @@ final class InitSignalTests: XCTestCase {
             userDefaultsSuiteName: suiteName,
             retryPolicy: .immediate,
             transport: transport,
+            eligibilityChecker: MockEligibilityChecker(.ineligible("existing install")),
             isDevelopmentBuild: true
         )
 
@@ -170,6 +224,18 @@ private actor MockTransport: FirstLaunchTransport {
 
 private enum MockError: Error {
     case offline
+}
+
+private struct MockEligibilityChecker: AppStoreInstallEligibilityChecking {
+    let result: AppStoreInstallEligibility
+
+    init(_ result: AppStoreInstallEligibility) {
+        self.result = result
+    }
+
+    func eligibility() async -> AppStoreInstallEligibility {
+        result
+    }
 }
 
 private extension RetryPolicy {
