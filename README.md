@@ -7,7 +7,7 @@ Tiny Swift SDK for sending exactly one first-launch signal to InitSignal.
 Add this package in Xcode:
 
 ```txt
-https://github.com/initsignal/initsignal-swift
+https://github.com/bardonadam/initsignal-swift.git
 ```
 
 ## Usage
@@ -55,4 +55,3 @@ struct ExampleApp: App {
 - Marks the launch as sent only after InitSignal accepts the event.
 - Does not collect user identifiers, sessions, screen views, IDFA, IDFV, Apple ID, email, location, contacts, photos, or files.
 - Uses only Foundation and a short-lived ephemeral URLSession request.
-
