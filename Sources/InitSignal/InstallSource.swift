@@ -6,7 +6,11 @@ enum InstallSource {
             let receiptURL = bundle.appStoreReceiptURL,
             FileManager.default.fileExists(atPath: receiptURL.path)
         else {
-            return nil
+            #if os(macOS) || targetEnvironment(macCatalyst)
+            return "direct"
+            #else
+            return "unknown"
+            #endif
         }
 
         if receiptURL.lastPathComponent == "sandboxReceipt" {
@@ -20,4 +24,3 @@ enum InstallSource {
         #endif
     }
 }
-

@@ -14,7 +14,12 @@ struct FirstLaunchPayload: Encodable, Equatable, Sendable {
     let installSource: String?
     let eventUuid: UUID
 
-    static func current(eventUUID: UUID, bundle: Bundle = .main, date: Date = Date()) -> FirstLaunchPayload? {
+    static func current(
+        eventUUID: UUID,
+        installSource: String? = nil,
+        bundle: Bundle = .main,
+        date: Date = Date()
+    ) -> FirstLaunchPayload? {
         guard let bundleId = bundle.bundleIdentifier, bundleId.isEmpty == false else {
             return nil
         }
@@ -30,7 +35,7 @@ struct FirstLaunchPayload: Encodable, Equatable, Sendable {
             appLocale: Locale.current.identifier.replacingOccurrences(of: "_", with: "-"),
             timestamp: ISO8601.string(from: date),
             sdkVersion: InitSignal.sdkVersion,
-            installSource: InstallSource.detect(bundle: bundle),
+            installSource: installSource ?? InstallSource.detect(bundle: bundle),
             eventUuid: eventUUID
         )
     }

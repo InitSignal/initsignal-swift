@@ -48,9 +48,23 @@ struct ExampleApp: App {
 
 `start` returns immediately, never throws, and fails quietly if the network or InitSignal service is unavailable.
 
+## Debug mode
+
+Use debug mode while verifying the integration from Xcode:
+
+```swift
+InitSignal.start { options in
+    options.apiKey = "is_live_..."
+    options.debug = true
+}
+```
+
+In local debug builds, `debug = true` sends a fresh `development` signal on each app launch and prints SDK diagnostics to the Xcode console. Leave it off for release builds.
+
 ## Behavior
 
-- Sends one accepted first-launch event per app install/app lifetime.
+- Sends one accepted first-launch event per app install/app lifetime outside debug mode.
+- Local debug builds do not send unless `options.debug = true`.
 - If the first attempt fails, retries quietly on later launches using the same event UUID.
 - Marks the launch as sent only after InitSignal accepts the event.
 - Does not collect user identifiers, sessions, screen views, IDFA, IDFV, Apple ID, email, location, contacts, photos, or files.
