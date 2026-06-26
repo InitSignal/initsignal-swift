@@ -7,7 +7,7 @@ Tiny Swift SDK for sending exactly one first-launch signal to InitSignal.
 Add this package in Xcode:
 
 ```txt
-https://github.com/bardonadam/initsignal-swift.git
+https://github.com/initsignal/initsignal-swift.git
 ```
 
 ## Usage
