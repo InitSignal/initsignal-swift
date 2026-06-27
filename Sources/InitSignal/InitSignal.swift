@@ -112,10 +112,10 @@ actor InitSignalRuntime {
             return
         }
 
-        let eventUUID = storage.pendingEventUUID ?? UUID()
-        storage.pendingEventUUID = eventUUID
+        let occurredAt = storage.pendingOccurredAt ?? Date()
+        storage.pendingOccurredAt = occurredAt
 
-        guard let payload = FirstLaunchPayload.current(eventUUID: eventUUID) else { return }
+        guard let payload = FirstLaunchPayload.current(date: occurredAt) else { return }
 
         do {
             let statusCode = try await send(payload: payload, appKey: trimmedAppKey, options: options)
@@ -134,7 +134,7 @@ actor InitSignalRuntime {
     }
 
     private func sendDebugLaunch(appKey: String, options: InitSignal.Options) async {
-        guard let payload = FirstLaunchPayload.current(eventUUID: UUID(), installSource: "development") else { return }
+        guard let payload = FirstLaunchPayload.current(installSource: "development") else { return }
         log("Sending InitSignal debug launch", options: options)
 
         do {

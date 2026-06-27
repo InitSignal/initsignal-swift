@@ -3,9 +3,10 @@ import Foundation
 final class FirstLaunchStorage {
     private enum Keys {
         static let hasSent = "com.initsignal.firstLaunch.hasSent"
-        static let pendingEventUUID = "com.initsignal.firstLaunch.pendingEventUUID"
+        static let pendingOccurredAt = "com.initsignal.firstLaunch.pendingOccurredAt"
         static let nextRetryAfter = "com.initsignal.firstLaunch.nextRetryAfter"
         static let attemptCount = "com.initsignal.firstLaunch.attemptCount"
+        static let legacyPendingEventUUID = "com.initsignal.firstLaunch.pendingEventUUID"
     }
 
     private let defaults: UserDefaults
@@ -16,22 +17,20 @@ final class FirstLaunchStorage {
         } else {
             self.defaults = .standard
         }
+
+        defaults.removeObject(forKey: Keys.legacyPendingEventUUID)
     }
 
     var hasSent: Bool {
         defaults.bool(forKey: Keys.hasSent)
     }
 
-    var pendingEventUUID: UUID? {
+    var pendingOccurredAt: Date? {
         get {
-            guard let value = defaults.string(forKey: Keys.pendingEventUUID) else {
-                return nil
-            }
-
-            return UUID(uuidString: value)
+            defaults.object(forKey: Keys.pendingOccurredAt) as? Date
         }
         set {
-            defaults.set(newValue?.uuidString, forKey: Keys.pendingEventUUID)
+            defaults.set(newValue, forKey: Keys.pendingOccurredAt)
         }
     }
 
@@ -45,9 +44,10 @@ final class FirstLaunchStorage {
 
     func markSent() {
         defaults.set(true, forKey: Keys.hasSent)
-        defaults.removeObject(forKey: Keys.pendingEventUUID)
+        defaults.removeObject(forKey: Keys.pendingOccurredAt)
         defaults.removeObject(forKey: Keys.nextRetryAfter)
         defaults.removeObject(forKey: Keys.attemptCount)
+        defaults.removeObject(forKey: Keys.legacyPendingEventUUID)
     }
 
     func recordFailure(now: Date, retryPolicy: RetryPolicy) {
@@ -58,9 +58,10 @@ final class FirstLaunchStorage {
 
     func resetForTests() {
         defaults.removeObject(forKey: Keys.hasSent)
-        defaults.removeObject(forKey: Keys.pendingEventUUID)
+        defaults.removeObject(forKey: Keys.pendingOccurredAt)
         defaults.removeObject(forKey: Keys.nextRetryAfter)
         defaults.removeObject(forKey: Keys.attemptCount)
+        defaults.removeObject(forKey: Keys.legacyPendingEventUUID)
     }
 }
 
@@ -86,4 +87,3 @@ struct RetryPolicy: Sendable {
         }
     }
 }
-

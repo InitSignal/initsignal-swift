@@ -12,10 +12,8 @@ struct FirstLaunchPayload: Encodable, Equatable, Sendable {
     let timestamp: String
     let sdkVersion: String
     let installSource: String?
-    let eventUuid: UUID
 
     static func current(
-        eventUUID: UUID,
         installSource: String? = nil,
         bundle: Bundle = .main,
         date: Date = Date()
@@ -35,8 +33,7 @@ struct FirstLaunchPayload: Encodable, Equatable, Sendable {
             appLocale: Locale.current.identifier.replacingOccurrences(of: "_", with: "-"),
             timestamp: ISO8601.string(from: date),
             sdkVersion: InitSignal.sdkVersion,
-            installSource: installSource ?? InstallSource.detect(bundle: bundle),
-            eventUuid: eventUUID
+            installSource: installSource ?? InstallSource.detect(bundle: bundle)
         )
     }
 }

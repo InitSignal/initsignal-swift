@@ -25,10 +25,10 @@ final class InitSignalTests: XCTestCase {
         let payloads = await transport.payloads
         XCTAssertEqual(payloads.count, 1)
         XCTAssertTrue(storage.hasSent)
-        XCTAssertNil(storage.pendingEventUUID)
+        XCTAssertNil(storage.pendingOccurredAt)
     }
 
-    func testFailureKeepsPendingUuidForLaterRetry() async {
+    func testFailureKeepsPendingTimestampForLaterRetry() async {
         let suiteName = "InitSignalTests.\(UUID().uuidString)"
         let storage = FirstLaunchStorage(suiteName: suiteName)
         storage.resetForTests()
@@ -49,7 +49,7 @@ final class InitSignalTests: XCTestCase {
         let failedPayloads = await failingTransport.payloads
         XCTAssertEqual(failedPayloads.count, 1)
         XCTAssertFalse(storage.hasSent)
-        XCTAssertNotNil(storage.pendingEventUUID)
+        XCTAssertNotNil(storage.pendingOccurredAt)
 
         let retryTransport = MockTransport(results: [.success(202)])
         let retryRuntime = InitSignalRuntime()
@@ -66,7 +66,7 @@ final class InitSignalTests: XCTestCase {
 
         let retriedPayloads = await retryTransport.payloads
         XCTAssertEqual(retriedPayloads.count, 1)
-        XCTAssertEqual(failedPayloads.first?.eventUuid, retriedPayloads.first?.eventUuid)
+        XCTAssertEqual(failedPayloads.first?.timestamp, retriedPayloads.first?.timestamp)
         XCTAssertTrue(storage.hasSent)
     }
 
@@ -114,7 +114,7 @@ final class InitSignalTests: XCTestCase {
         let payloads = await transport.payloads
         XCTAssertEqual(payloads.count, 0)
         XCTAssertFalse(storage.hasSent)
-        XCTAssertNil(storage.pendingEventUUID)
+        XCTAssertNil(storage.pendingOccurredAt)
     }
 
     func testUnknownOriginalAppVersionDefersWithoutPayload() async {
@@ -138,7 +138,7 @@ final class InitSignalTests: XCTestCase {
         let payloads = await transport.payloads
         XCTAssertEqual(payloads.count, 0)
         XCTAssertFalse(storage.hasSent)
-        XCTAssertNil(storage.pendingEventUUID)
+        XCTAssertNil(storage.pendingOccurredAt)
     }
 
     func testDevelopmentBuildWithoutDebugDoesNotSend() async {
@@ -163,7 +163,7 @@ final class InitSignalTests: XCTestCase {
         let payloads = await transport.payloads
         XCTAssertEqual(payloads.count, 0)
         XCTAssertFalse(storage.hasSent)
-        XCTAssertNil(storage.pendingEventUUID)
+        XCTAssertNil(storage.pendingOccurredAt)
     }
 
     func testDebugDevelopmentBuildSendsFreshEventPerLaunch() async {
@@ -189,9 +189,8 @@ final class InitSignalTests: XCTestCase {
         let payloads = await transport.payloads
         XCTAssertEqual(payloads.count, 2)
         XCTAssertEqual(payloads.map(\.installSource), ["development", "development"])
-        XCTAssertNotEqual(payloads[0].eventUuid, payloads[1].eventUuid)
         XCTAssertFalse(storage.hasSent)
-        XCTAssertNil(storage.pendingEventUUID)
+        XCTAssertNil(storage.pendingOccurredAt)
     }
 }
 

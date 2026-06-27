@@ -17,7 +17,6 @@ The SDK collects:
 - Timestamp
 - SDK version
 - Optional install source when safely detectable, including `development` when debug mode is enabled
-- Random event UUID for deduplication only
 
 The SDK does not collect:
 
@@ -31,7 +30,8 @@ The SDK does not collect:
 - Behavioral sessions
 - Screen views
 - Cross-app identifiers
+- Random event identifiers
 
-The event UUID is used only to deduplicate retries. It is not a persistent user identity.
+Retry attempts are deduplicated from the launch facts already in the event. The SDK does not send a random event identifier.
 
 When `options.debug = true` in a local debug build, the SDK sends a fresh development signal on each app launch for integration testing and does not mark the production first-launch signal as sent.
