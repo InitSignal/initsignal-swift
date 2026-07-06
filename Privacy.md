@@ -14,6 +14,7 @@ The SDK collects:
 - Device family
 - Device model identifier
 - App locale/language
+- App Store storefront country/region code when available (for example, `USA`). This is the customer's App Store account/storefront country, not device location.
 - Timestamp
 - SDK version
 - Optional install source when safely detectable, including `development` when debug mode is enabled
@@ -25,7 +26,7 @@ The SDK does not collect:
 - IDFA
 - IDFV
 - IP address
-- Location
+- Location (the App Store storefront country/region code is account storefront metadata, not device location)
 - Contacts, photos, or files
 - Behavioral sessions
 - Screen views

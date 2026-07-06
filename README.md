@@ -73,10 +73,11 @@ In local debug builds, `debug = true` sends a fresh `development` signal on each
 
 - Sends one accepted first-launch event per app install/app lifetime outside debug mode.
 - Sends only when StoreKit confirms the app's original download/purchase version matches the current app version.
+- Includes the App Store storefront country/region code when StoreKit provides it, for example `USA`. This is App Store account/storefront metadata, not device location.
 - Skips existing customers whose original app version is older than the current version.
 - If StoreKit cannot verify the app transaction, skips quietly and tries again on a later launch.
 - Local debug builds do not send unless `options.debug = true`.
 - If the first attempt fails, retries quietly on later launches using the same launch timestamp for server-side deduplication.
 - Marks the launch as sent only after InitSignal accepts the event.
-- Does not collect user identifiers, sessions, screen views, IDFA, IDFV, Apple ID, email, location, contacts, photos, or files.
+- Does not collect user identifiers, sessions, screen views, IDFA, IDFV, Apple ID, email, device location, contacts, photos, or files.
 - Uses only Foundation and a short-lived ephemeral URLSession request.

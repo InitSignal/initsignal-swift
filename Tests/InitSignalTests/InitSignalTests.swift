@@ -3,6 +3,32 @@ import Foundation
 import XCTest
 
 final class InitSignalTests: XCTestCase {
+    func testStorefrontCountryCodeIsNormalizedAndEncoded() throws {
+        XCTAssertEqual(AppStorefront.normalizedCountryCode(" usa "), "USA")
+        XCTAssertNil(AppStorefront.normalizedCountryCode("US"))
+        XCTAssertNil(AppStorefront.normalizedCountryCode(""))
+
+        let payload = FirstLaunchPayload(
+            bundleId: "com.example.app",
+            appVersion: "1.0.0",
+            buildNumber: "1",
+            platform: "iOS",
+            osVersion: "18.0",
+            deviceFamily: "iPhone",
+            deviceModel: "iPhone14,7",
+            appLocale: "en-US",
+            appStorefrontCountryCode: "USA",
+            timestamp: "2026-07-06T12:00:00.000Z",
+            sdkVersion: "test",
+            installSource: "app-store"
+        )
+
+        let data = try JSONEncoder().encode(payload)
+        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+
+        XCTAssertEqual(object["appStorefrontCountryCode"] as? String, "USA")
+    }
+
     func testStartSendsOnceAndMarksSent() async {
         let suiteName = "InitSignalTests.\(UUID().uuidString)"
         let storage = FirstLaunchStorage(suiteName: suiteName)
