@@ -81,3 +81,7 @@ In local debug builds, `debug = true` sends a fresh `development` signal on each
 - Marks the launch as sent only after InitSignal accepts the event.
 - Does not collect user identifiers, sessions, screen views, IDFA, IDFV, Apple ID, email, device location, contacts, photos, or files.
 - Uses only Foundation and a short-lived ephemeral URLSession request.
+
+## License
+
+InitSignal Swift is available under the [Apache License 2.0](LICENSE). Access to the hosted InitSignal service is governed separately by the InitSignal Terms of Service.
