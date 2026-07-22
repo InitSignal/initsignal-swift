@@ -1,7 +1,7 @@
 import Foundation
 
 public enum InitSignal {
-    public static let sdkVersion = "internal"
+    public static let sdkVersion = "1.0.0"
 
     public static func start(_ appKey: String, configure: (inout Options) -> Void = { _ in }) {
         var options = Options(appKey: appKey)

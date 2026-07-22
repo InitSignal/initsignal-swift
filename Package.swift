@@ -16,7 +16,12 @@ let package = Package(
         ),
     ],
     targets: [
-        .target(name: "InitSignal"),
+        .target(
+            name: "InitSignal",
+            resources: [
+                .process("PrivacyInfo.xcprivacy"),
+            ]
+        ),
         .testTarget(
             name: "InitSignalTests",
             dependencies: ["InitSignal"]
