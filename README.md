@@ -6,7 +6,7 @@
 
 <h1 align="center">InitSignal Swift</h1>
 
-<p align="center"><strong>Know when users arrive,</strong></p>
+<p align="center"><strong>Know when users arrive</strong></p>
 
 <p align="center">Track first-time app launches and revenue in real time with a lightweight SDK, live dashboard and instant notifications</p>
 
