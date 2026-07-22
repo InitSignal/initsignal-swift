@@ -1,4 +1,28 @@
-# InitSignal Swift
+<p align="center">
+  <a href="https://initsignal.com">
+    <img src="assets/initsignal-mark.svg" width="96" alt="InitSignal">
+  </a>
+</p>
+
+<h1 align="center">InitSignal Swift</h1>
+
+<p align="center"><strong>Know when users arrive,</strong></p>
+
+<p align="center">Track first-time app launches and revenue in real time with a lightweight SDK, live dashboard and instant notifications</p>
+
+<p align="center">
+  <a href="https://github.com/InitSignal/initsignal-swift/actions/workflows/ci.yml"><img src="https://github.com/InitSignal/initsignal-swift/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/Swift-5.9%2B-F05138?logo=swift&logoColor=white" alt="Swift 5.9 or later">
+  <img src="https://img.shields.io/badge/SPM-compatible-0A7B83" alt="Swift Package Manager compatible">
+  <img src="https://img.shields.io/badge/platforms-iOS%2016%2B%20%7C%20macOS%2013%2B%20%7C%20Catalyst%2016%2B-1677FF" alt="iOS 16 or later, macOS 13 or later, and Mac Catalyst 16 or later">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-071525" alt="Apache License 2.0"></a>
+</p>
+
+<p align="center">
+  <a href="https://initsignal.com">Website</a> ·
+  <a href="https://initsignal.com/app/">Dashboard</a> ·
+  <a href="mailto:support@initsignal.com">Support</a>
+</p>
 
 Tiny Swift SDK for sending exactly one first-launch signal to InitSignal.
 

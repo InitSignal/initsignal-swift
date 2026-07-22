@@ -1,0 +1,14 @@
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>InitSignal</title>
+  <rect width="1024" height="1024" rx="180" fill="#071525"/>
+  <g transform="translate(-39 16)">
+    <path d="M328 514.5L276 565L321 677M321 677V902M321 677L442 706M442 706L535 902M442 706L448.5 613.5" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M585 902H236C233.791 902 232 903.791 232 906V948C232 950.209 233.791 952 236 952H585C587.209 952 589 950.209 589 948V906C589 903.791 587.209 902 585 902Z" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M227 69.5C296 39.5115 467.5 129.5 651 297C791 435.5 938.5 655 893 729C846.5 806 646 763.999 460 621.999C254 486 75.4998 135.344 227 69.5Z" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M337 348L701.5 192.5" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M202 87.5C164 177.5 329.107 358.964 465.5 486.5C604.266 616.255 752.5 725 889.5 725" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M474 479L712.5 209" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M640 620L731 211" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M749 214C776.062 214 798 192.062 798 165C798 137.938 776.062 116 749 116C721.938 116 700 137.938 700 165C700 192.062 721.938 214 749 214Z" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
