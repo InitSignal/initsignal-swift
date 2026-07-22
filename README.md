@@ -20,8 +20,8 @@
 
 <p align="center">
   <a href="https://initsignal.com">Website</a> ·
-  <a href="https://initsignal.com/app/">Dashboard</a> ·
-  <a href="mailto:support@initsignal.com">Support</a>
+  <a href="https://initsignal.com/app/dashboard">Dashboard</a> ·
+  <a href="mailto:adam@initsignal.com">Support</a>
 </p>
 
 Tiny Swift SDK for sending exactly one first-launch signal to InitSignal.
