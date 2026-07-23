@@ -1,7 +1,7 @@
 import Foundation
 
 public enum InitSignal {
-    public static let sdkVersion = "1.0.0"
+    public static let sdkVersion = "1.0.1"
 
     public static func start(_ appKey: String, configure: (inout Options) -> Void = { _ in }) {
         var options = Options(appKey: appKey)
@@ -134,7 +134,10 @@ actor InitSignalRuntime {
     }
 
     private func sendDebugLaunch(appKey: String, options: InitSignal.Options) async {
-        guard let payload = await FirstLaunchPayload.current(installSource: "development") else { return }
+        guard let payload = FirstLaunchPayload.make(
+            installSource: "development",
+            appStorefrontCountryCode: nil
+        ) else { return }
         log("Sending InitSignal debug launch", options: options)
 
         do {

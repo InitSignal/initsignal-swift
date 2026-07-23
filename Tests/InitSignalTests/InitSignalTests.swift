@@ -215,6 +215,7 @@ final class InitSignalTests: XCTestCase {
         let payloads = await transport.payloads
         XCTAssertEqual(payloads.count, 2)
         XCTAssertEqual(payloads.map(\.installSource), ["development", "development"])
+        XCTAssertTrue(payloads.allSatisfy { $0.appStorefrontCountryCode == nil })
         XCTAssertFalse(storage.hasSent)
         XCTAssertNil(storage.pendingOccurredAt)
     }
